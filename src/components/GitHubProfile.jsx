@@ -1,11 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, MapPin, Twitter, Users, GitFork, Star, Clock } from 'lucide-react';
+import { Calendar, MapPin, Twitter, Users, GitFork, Star, Clock, ArrowLeft, Mail, Building, Link as LinkIcon} from 'lucide-react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 
-const GitHubProfile = ({ username, onClose }) => {
+// Language color mapping
+const LANGUAGE_COLORS = {
+  'JavaScript': '#f1e05a',
+  'TypeScript': '#3178c6',
+  'Python': '#3572A5',
+  'Java': '#b07219',
+  'HTML': '#e34c26',
+  'CSS': '#563d7c',
+  'Ruby': '#701516',
+  'PHP': '#4F5D95',
+  'C++': '#f34b7d',
+  'C#': '#178600',
+  'Go': '#00ADD8',
+  'Rust': '#dea584',
+  'Swift': '#ffac45',
+  'Kotlin': '#A97BFF',
+  'Dart': '#00B4AB',
+  'Shell': '#89e051',
+  'Scala': '#c22d40',
+  'R': '#198CE7',
+};
+
+const formatNumber = (num) => {
+  if (num >= 1000) {
+    return (num / 1000).toFixed(1) + 'k';
+  }
+  return num.toString();
+};
+
+const GitHubProfile = () => {
   const [profile, setProfile] = useState(null);
   const [repos, setRepos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const { username } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const fetchProfileDetails = async () => {
@@ -30,6 +64,15 @@ const GitHubProfile = ({ username, onClose }) => {
     fetchProfileDetails();
   }, [username]);
 
+  const handleGoBack = () => {
+    const state = location.state;
+    if (state?.users) {
+      navigate('/', { state: { users: state.users, searchTerm: state.searchTerm } });
+    } else {
+      navigate('/');
+    }
+  };
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'long',
@@ -40,19 +83,19 @@ const GitHubProfile = ({ username, onClose }) => {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-zinc-50"></div>
+      <div className="min-h-screen bg-zinc-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-zinc-600 border-t-transparent"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
-        <div className="bg-red-900/20 border border-red-500/30 text-red-500 p-6 rounded-lg text-center">
-          <p>{error}</p>
-          <button onClick={onClose} className="mt-4 bg-zinc-700 text-zinc-50 px-4 py-2 rounded-lg hover:bg-zinc-600">
-            Close
+      <div className="min-h-screen bg-zinc-900 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">{error}</p>
+          <button onClick={handleGoBack} className="px-4 py-2 bg-zinc-800 text-white rounded-md hover:bg-zinc-700">
+            Go Back
           </button>
         </div>
       </div>
@@ -60,120 +103,174 @@ const GitHubProfile = ({ username, onClose }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/90 z-50 overflow-y-auto">
-      <div className="dark bg-gradient-to-b from-zinc-900 to-zinc-950 text-zinc-50 min-h-screen p-6">
-        <div className="max-w-4xl mx-auto bg-zinc-900/50 backdrop-blur-xl rounded-xl shadow-2xl border border-zinc-800/50 p-8">
-          <button 
-            onClick={onClose}
-            className="absolute top-8 right-8 text-zinc-400 hover:text-white transition-colors"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+    <div className="min-h-screen bg-zinc-950">
+      <div className="max-w-6xl mx-auto px-4 py-6">
+        <button 
+          onClick={handleGoBack}
+          className="mb-6 text-zinc-200 hover:text-white flex items-center gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          <span>Back to Search</span>
+        </button>
 
-          <div className="flex flex-col md:flex-row items-start gap-8 mb-8">
-            <div className="flex flex-col items-center space-y-4">
+        <div className="flex flex-col md:flex-row gap-8">
+          {/* Left Sidebar */}
+          <div className="md:w-1/4">
+            <div className="relative group">
               <img 
                 src={profile.avatar_url} 
                 alt={`${profile.login}'s avatar`} 
-                className="w-40 h-40 rounded-full object-cover border-4 border-zinc-700 hover:border-zinc-500 transition-colors duration-300"
+                className="w-full rounded-full border border-zinc-700"
               />
-              <a 
-                href={profile.html_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-zinc-400 hover:text-zinc-200 transition-colors"
-              >
-                @{profile.login}
-              </a>
             </div>
-            
-            <div className="flex-1 space-y-6">
-              <div>
-                <h1 className="text-3xl font-bold text-zinc-100 mb-2">{profile.name || profile.login}</h1>
-                <p className="text-zinc-400 text-lg">{profile.bio || 'No bio available'}</p>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {profile.location && (
-                  <div className="flex items-center space-x-2 text-zinc-400">
-                    <MapPin className="h-5 w-5" />
-                    <span>{profile.location}</span>
-                  </div>
-                )}
-                {profile.twitter_username && (
-                  <div className="flex items-center space-x-2 text-zinc-400">
-                    <Twitter className="h-5 w-5" />
-                    <a 
-                      href={`https://twitter.com/${profile.twitter_username}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:text-blue-400 transition-colors"
-                    >
-                      @{profile.twitter_username}
-                    </a>
-                  </div>
-                )}
-                <div className="flex items-center space-x-2 text-zinc-400">
-                  <Calendar className="h-5 w-5" />
-                  <span>Joined {formatDate(profile.created_at)}</span>
-                </div>
-                <div className="flex items-center space-x-2 text-zinc-400">
-                  <Clock className="h-5 w-5" />
-                  <span>Last updated {formatDate(profile.updated_at)}</span>
-                </div>
-              </div>
+            <div className="mt-4">
+              <h1 className="text-2xl font-semibold text-white">{profile.name}</h1>
+              <p className="text-xl text-zinc-400">{profile.login}</p>
+            </div>
+            <a 
+              href={profile.html_url} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="mt-4 w-full block text-center px-3 py-1.5 border border-zinc-600 rounded-md text-sm font-medium text-zinc-300 hover:bg-zinc-800"
+            >
+              Follow
+            </a>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
-                <div className="bg-zinc-800/50 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-zinc-100">{profile.public_repos}</div>
-                  <div className="text-sm text-zinc-400">Repositories</div>
+            <div className="mt-4">
+              <p className="text-zinc-300">{profile.bio}</p>
+            </div>
+
+            <div className="mt-4 flex items-center gap-2">
+              <div className="flex items-center gap-1 text-zinc-400">
+                <Users className="h-4 w-4" />
+                <a 
+                  href={`${profile.html_url}?tab=followers`} 
+                  className="flex items-center gap-1"
+                >
+                  <span className="font-bold text-zinc-50 hover:text-blue-700">
+                    {formatNumber(profile.followers)}
+                  </span>
+                  <span>followers</span>
+                </a>
+              </div>
+              <span className='text-zinc-50'>·</span>
+              <div className="flex items-center gap-1 text-zinc-400">
+                <a 
+                  href={`${profile.html_url}?tab=following`} 
+                  className="flex items-center gap-1"
+                >
+                  <span className="font-bold text-zinc-50 hover:text-blue-700">
+                    {formatNumber(profile.following)}
+                  </span>
+                  <span>following</span>
+                </a>
+              </div>
+            </div>
+
+            <div className="mt-4 space-y-2 text-sm text-zinc-400">
+              {profile.company && (
+                <div className="flex items-center gap-2">
+                  <Building className="h-4 w-4" />
+                  <span className='font-bold text-zinc-100'>{profile.company}</span>
                 </div>
-                <div className="bg-zinc-800/50 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-zinc-100">{profile.followers}</div>
-                  <div className="text-sm text-zinc-400">Followers</div>
+              )}
+              {profile.location && (
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  <span className='text-zinc-300'>{profile.location}</span>
                 </div>
-                <div className="bg-zinc-800/50 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-zinc-100">{profile.following}</div>
-                  <div className="text-sm text-zinc-400">Following</div>
+              )}
+              {profile.email && (
+                <div className="flex items-center gap-2">
+                  <Mail className="h-4 w-4" />
+                  <span className='font-bold text-zinc-300'>{profile.email}</span>
                 </div>
-                <div className="bg-zinc-800/50 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-zinc-100">{profile.public_gists}</div>
-                  <div className="text-sm text-zinc-400">Gists</div>
+              )}
+              {profile.blog && (
+                <div className="flex items-center gap-2">
+                  <LinkIcon className="h-4 w-4" />
+                  <a href={profile.blog} className="text-zinc-100 hover:underline" target="_blank" rel="noopener noreferrer">
+                    {profile.blog}
+                  </a>
                 </div>
+              )}
+              {profile.twitter_username && (
+                <div className="flex items-center gap-2">
+                  <Twitter className="h-4 w-4" />
+                  <a href={`https://twitter.com/${profile.twitter_username}`} className="text-zinc-100 hover:underline hover:text-blue-600" target="_blank" rel="noopener noreferrer">
+                    @{profile.twitter_username}
+                  </a>
+                </div>
+              )}
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                <span>Joined {formatDate(profile.created_at)}</span>
               </div>
             </div>
           </div>
 
-          <div className="mt-12">
-            <h2 className="text-xl font-semibold mb-6 text-zinc-200">Recent Repositories</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {repos.map((repo) => (
-                <a 
-                  key={repo.id} 
-                  href={repo.html_url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="group bg-zinc-800/30 border border-zinc-700/50 rounded-xl p-4 hover:bg-zinc-700/50 transition-all duration-300"
-                >
-                  <h3 className="font-semibold text-zinc-100 truncate group-hover:text-zinc-200">{repo.name}</h3>
-                  <p className="text-sm text-zinc-400 mt-2 line-clamp-2">{repo.description || 'No description'}</p>
-                  <div className="flex items-center gap-4 mt-4 text-sm text-zinc-500">
-                    <div className="flex items-center">
-                      <Star className="h-4 w-4 mr-1" />
-                      {repo.stargazers_count}
+          {/* Right Content */}
+          <div className="md:w-3/4">
+            <div className="border-b border-zinc-700 mb-6">
+              <nav className="flex space-x-8">
+                <a href="#" className="border-b-2 border-orange-500 pb-3 px-1 text-sm font-semibold text-white">
+                  Repositories <span className="bg-zinc-800 rounded-full px-2 ml-1">Top 6</span>
+                </a>
+              </nav>
+            </div>
+
+            <div className="space-y-4">
+              {repos.map((repo, index) => (
+                <div key={repo.id}>
+                  {index > 0 && <div className="border-t border-zinc-700 my-4"></div>}
+                  <div className="pt-4 pb-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <a 
+                            href={repo.html_url}
+                            className="text-blue-400 hover:underline font-semibold text-xl"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {repo.name}
+                          </a>
+                          <span className="px-2 py-0.5 border border-zinc-600 rounded-2xl text-xs font-medium text-zinc-300">
+                            Public
+                          </span>
+                        </div>
+                        <p className="mt-1 text-zinc-400">{repo.description}</p>
+                      </div>
                     </div>
-                    <div className="flex items-center">
-                      <GitFork className="h-4 w-4 mr-1" />
-                      {repo.forks_count}
-                    </div>
-                    <div className="flex items-center text-xs">
-                      <div className={`w-3 h-3 rounded-full mr-1 ${repo.language ? 'bg-blue-400' : 'bg-gray-400'}`}></div>
-                      {repo.language || 'Unknown'}
+
+                    <div className="mt-4 flex items-center gap-4 text-sm text-zinc-400">
+                      {repo.language && (
+                        <div className="flex items-center gap-1">
+                          <div 
+                            className="w-3 h-3 rounded-full" 
+                            style={{ 
+                              backgroundColor: LANGUAGE_COLORS[repo.language] || '#8b8b8b'
+                            }}
+                          ></div>
+                          <span>{repo.language}</span>
+                        </div>
+                      )}
+                      <div className="flex items-center gap-1">
+                        <Star className="h-4 w-4" />
+                        <span>{formatNumber(repo.stargazers_count)}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <GitFork className="h-4 w-4" />
+                        <span>{formatNumber(repo.forks_count)}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-4 w-4" />
+                        <span>Updated {formatDate(repo.updated_at)}</span>
+                      </div>
                     </div>
                   </div>
-                </a>
+                </div>
               ))}
             </div>
           </div>
