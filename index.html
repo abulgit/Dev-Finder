@@ -1,13 +1,114 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dev Finder</title>
-  </head>
-  <body>
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebApplication">
+<head>
+    <!-- Character Encoding and Compatibility -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- Primary SEO Meta Tags -->
+    <title>Dev Finder | Advanced Developer Profile Search Tool</title>
+    <meta name="description" content="Discover, analyze, and explore GitHub developer profiles instantly. Search repositories, track contributions, view developer stats, and gain insights into coding expertise across multiple programming domains.">
+    
+    <!-- Comprehensive Keyword Meta Tags -->
+    <meta name="keywords" content="GitHub user search, developer profile finder, programmer lookup, GitHub profile explorer, code repository search, developer analytics, GitHub user stats, programmer portfolio, developer insights, coding profile browser, open-source developer search, GitHub profile viewer, programmer network, developer contribution tracker, tech talent discovery">
+
+    <!-- Geo-Targeting Meta Tags -->
+    <meta name="geo.region" content="Global">
+    <meta name="geo.position" content="0;0">
+    <meta name="ICBM" content="0, 0">
+
+    <!-- Robots and Indexing -->
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow, snippet, image">
+    <meta name="bingbot" content="index, follow">
+
+    <!-- Open Graph / Facebook Meta Tags -->
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="GitHub User Explorer: Advanced Developer Profile Search">
+    <meta property="og:description" content="Discover, analyze, and explore GitHub developer profiles instantly. Search repositories, track contributions, view developer stats, and gain insights into coding expertise.">
+    <meta property="og:url" content="https://devprofilesearch.vercel.app/">
+    <meta property="og:site_name" content="GitHub User Explorer">
+    <meta property="og:image" content="https://devprofilesearch.vercel.app/preview-image.jpg">
+    <meta property="og:image:secure_url" content="https://devprofilesearch.vercel.app/preview-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="GitHub User Explorer - Developer Profile Search Tool">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="GitHub User Explorer: Advanced Developer Profile Search">
+    <meta name="twitter:description" content="Discover, analyze, and explore GitHub developer profiles instantly. Search repositories, track contributions, view developer stats, and gain insights into coding expertise.">
+    <meta name="twitter:image" content="https://devprofilesearch.vercel.app/preview-image.jpg">
+    <meta name="twitter:image:alt" content="GitHub User Explorer - Developer Profile Search Tool">
+    <meta name="twitter:site" content="@Abultwitt">
+    <meta name="twitter:creator" content="@Abultwitt">
+
+    <!-- Verification Meta Tags -->
+    <meta name="google-site-verification" content="YOUR_GOOGLE_VERIFICATION_CODE">
+    <meta name="bing-site-verification" content="YOUR_BING_VERIFICATION_CODE">
+
+    <!-- Language and Alternate Versions -->
+    <link rel="alternate" hreflang="x-default" href="https://devprofilesearch.vercel.app">
+    <link rel="alternate" hreflang="en" href="https://devprofilesearch.vercel.app/en">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://devprofilesearch.vercel.app">
+
+    <!-- Favicon and Touch Icons -->
+    <link rel="icon" type="image/svg+xml" href="/icon.svg">
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Theme and Performance Meta Tags -->
+    <meta name="theme-color" content="#171717">
+    <meta name="msapplication-TileColor" content="#171717">
+    <link rel="preconnect" href="https://api.github.com">
+    <link rel="dns-prefetch" href="https://api.github.com">
+
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "GitHub User Explorer",
+        "url": "https://devprofilesearch.vercel.app",
+        "description": "Advanced tool for discovering and analyzing GitHub developer profiles",
+        "applicationCategory": "Productivity",
+        "operatingSystem": "All",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "keywords": [
+            "GitHub search",
+            "developer profiles",
+            "code repository",
+            "programmer lookup",
+            "developer analytics"
+        ]
+    }
+    </script>
+
+    <!-- Performance Optimization -->
+    <link rel="preload" href="/src/main.jsx" as="script">
+</head>
+<body>
+    <!-- Accessibility Noscript -->
+    <noscript>
+        <div style="text-align: center; padding: 20px; background-color: #f4f4f4;">
+            <h1>GitHub User Explorer Requires JavaScript</h1>
+            <p>This advanced developer profile search tool requires JavaScript to function. Please enable JavaScript in your browser to use all features.</p>
+        </div>
+    </noscript>
+
+    <!-- React Application Root -->
     <div id="root"></div>
+
+    <!-- Main JavaScript -->
     <script type="module" src="/src/main.jsx"></script>
-  </body>
+</body>
 </html>
