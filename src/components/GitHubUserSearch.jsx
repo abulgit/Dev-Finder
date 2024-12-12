@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Github } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 const GitHubUserSearch = () => {
   const [username, setUsername] = useState('');
@@ -10,6 +11,9 @@ const GitHubUserSearch = () => {
   
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Backend API base URL (adjust as needed)
+  const API_BASE_URL = 'https://git-user-stats.vercel.app/api';
 
   // Reset state when component mounts or heading is clicked
   const resetState = () => {
@@ -42,6 +46,10 @@ const GitHubUserSearch = () => {
     setError(null);
 
     try {
+      // Save query to backend
+      await axios.post(`${API_BASE_URL}/query`, { query: username });
+
+      // Fetch GitHub users
       const response = await fetch(`https://api.github.com/search/users?q=${username}`);
       
       if (!response.ok) {
@@ -58,14 +66,21 @@ const GitHubUserSearch = () => {
     }
   };
 
-  const handleUserSelect = (user) => {
-    // Navigate to user profile and pass search state
-    navigate(`/user/${user.login}`, { 
-      state: { 
-        users, 
-        searchTerm: username 
-      } 
-    });
+  const handleUserSelect = async (user) => {
+    try {
+      // Save user profile to backend
+      await axios.post(`${API_BASE_URL}/user`, user);
+
+      // Navigate to user profile and pass search state
+      navigate(`/user/${user.login}`, { 
+        state: { 
+          users, 
+          searchTerm: username 
+        } 
+      });
+    } catch (error) {
+      console.error('Error saving user profile:', error);
+    }
   };
 
   return (
@@ -79,7 +94,7 @@ const GitHubUserSearch = () => {
               <h1 onClick={resetState} className="text-3xl cursor-pointer hover:opacity-80 transition-opacity font-bold">Dev Finder</h1>
             </div>
             <p className="text-zinc-300 max-w-md mx-auto">
-              Discover GitHub developers with ease. Search by username to explore profiles.
+              Discover GitHub developers with ease. Search by username to explore profiles. All data is fetched directly from GitHub's API.
             </p>
           </div>
 
