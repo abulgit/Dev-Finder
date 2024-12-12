@@ -1,3 +1,4 @@
+//components/GitHubProfile
 import React, { useState, useEffect } from 'react';
 import { Calendar, MapPin, Twitter, Users, GitFork, Star, Clock, ArrowLeft, Mail, Building, Link as LinkIcon} from 'lucide-react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
@@ -83,7 +84,7 @@ const GitHubProfile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-zinc-900 flex items-center justify-center">
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-2 border-zinc-600 border-t-transparent"></div>
       </div>
     );
@@ -91,7 +92,7 @@ const GitHubProfile = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-zinc-900 flex items-center justify-center">
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-500 mb-4">{error}</p>
           <button onClick={handleGoBack} className="px-4 py-2 bg-zinc-800 text-white rounded-md hover:bg-zinc-700">
